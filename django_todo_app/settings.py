@@ -8,3 +8,4 @@ db = {
     'PORT': '',
 }
 DATABASES = {'default': db, 'session': db, }
+AUTH_USER_MODEL = "accounts.MyUser"
