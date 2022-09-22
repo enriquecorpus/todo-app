@@ -7,8 +7,6 @@ from django.contrib import messages
 def register(request):
     if request.method == "POST":
         form = MyUserCreationForm(request.POST)
-        import pdb
-        pdb.set_trace()
         if form.is_valid():
             user = form.save()
             login(request, user)
