@@ -1,0 +1,5 @@
+binary==1.0.0
+Django==2.1.5
+django-bootstrap4==0.0.8
+psycopg2-binary==2.8.6
+pytz==2022.2.1
