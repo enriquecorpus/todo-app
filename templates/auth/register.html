@@ -6,29 +6,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Todo App</title>
+    <title>Todo App| Register</title>
 </head>
 <body class="bg-gray">
 
 <div class="container">
     <div class="row mt-5">
-        <form id="loginform" class="col-10 offset-1 col-md-6 offset-md-3 col-lg-4 offset-lg-4 mt-5" method="post">
+        <form id="registerform" class="col-10 offset-1 col-md-6 offset-md-3 col-lg-4 offset-lg-4 mt-5" method="post">
             <div class="col-12 text-center pb-3">
                 <img src="{% static 'images/todo.png' %}" class="d-inline-block"
                      style="max-height: 80px;height: auto;width: 80px">
             </div>
-            <h4 class="text-center mb-4 font-weight-normal">Login to TODO App</h4>
+            <h4 class="text-center mb-4 font-weight-normal">Register</h4>
             {% csrf_token %}
             {% bootstrap_form form %}
-            <button type="submit" class="btn btn-primary pl-5 pr-5 btn-block">Login</button>
-            <button type="button" class="btn btn-link pl-5 pr-5 btn-block">Register</button>
+            <button type="submit" class="btn btn-primary pl-5 pr-5 btn-block">Register</button>
         </form>
     </div>
 
 </div>
 <style>
 
-    #loginform {
+    #registerform {
         background-color: white;
         padding: 30px 30px 20px 30px;
         border-radius: 6px
