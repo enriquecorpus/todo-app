@@ -15,8 +15,6 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-import django.contrib.auth.views
-from accounts.views import register
 from todolist.views import index
 from django.urls import include
 

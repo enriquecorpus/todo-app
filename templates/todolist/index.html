@@ -16,14 +16,57 @@
 
 {% include 'common/base_header.html' %}
 <div class="container">
-  <div class="row">
+
     <div class="col-12 mt-5 text-center">
-      <h2>CSA CB Daily Productivity Stats</h2>
+      <h2>My Todo List</h2>
+    </div>
+
+    {% for todo in todolist %}
+
+  <div class="container mt-5">
+    <div class="d-flex justify-content-center row">
+      <div class="col-md-8">
+        <div class="d-flex flex-column comment-section">
+          <div class="bg-white p-2">
+            <div class="d-flex flex-row">
+              <div class="d-flex flex-column justify-content-start"><span class="d-block font-weight-bold name">{{todo.title}}</span><span class="date text-black-50">{{todo.created_at}}</span></div>
+            </div>
+            <div class="mt-2">
+              <p class="comment-text">{{todo.description}}</p>
+            </div>
+          </div>
+          <div class="bg-light p-2">
+            <div class="d-flex flex-row align-items-start"><textarea class="form-control ml-1 shadow-none textarea"></textarea></div>
+            <div class="mt-2 text-right"><button class="btn btn-primary btn-sm shadow-none" type="button">Post comment</button></div>
+            <hr class="mt-2 mb-3"/>
+          </div>
+
+
+          {% if todo.comments_set.all %}
+          <div class="bg-light p-2">
+            <h6>Comments</h6>
+          </div>
+          <div class="bg-light p-2">
+            {% for comments in todo.comments_set.all  %}
+            <div>
+              <p class="comment-text">{{comments.comment}}</p>
+            </div>
+            <div class="mt-2 text-right"><button class="btn btn-primary btn-sm shadow-none" type="button">Edit</button><button class="btn btn-outline-primary btn-sm ml-1 shadow-none" type="button">Delete</button></div>
+            <hr class="mt-2 mb-3"/>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+
+
+        </div>
+      </div>
     </div>
   </div>
-  <div class="row">
 
-  </div>
+
+    {% endfor %}
+<!--  </div>-->
 </div>
 <div clas="row">
   <div class="container-fluid" id="entered-daily-ratings"></div>
@@ -33,6 +76,35 @@
 <style>
   label {
     text-align: right;
+  }
+
+  body {
+    background: #eee
+  }
+
+  .date {
+    font-size: 11px
+  }
+
+  .comment-text {
+    font-size: 12px
+  }
+
+  .shadow-none {
+    box-shadow: none
+  }
+
+  .name {
+    color: #007bff
+  }
+
+  .cursor:hover {
+    color: blue
+  }
+
+
+  .textarea {
+    resize: none
   }
 </style>
 
