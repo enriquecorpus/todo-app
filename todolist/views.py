@@ -49,3 +49,19 @@ def add_comment(request):
     except KeyError:
         messages.error(request, "Comment is required.")
     return redirect("index")
+
+
+@django.contrib.auth.decorators.login_required
+@django.views.decorators.http.require_http_methods(["POST"])
+@utils.ajax.ajax_required
+def remove_comment(request):
+    try:
+        comment = todolist.models.Comments.objects.get(id=request.POST["comment_id"])
+        if comment.author != request.user:
+            return django.http.HttpResponseForbidden()
+        comment.delete()
+        return django.http.JsonResponse({"status": "ok"})
+    except KeyError:
+        return django.http.HttpResponseBadRequest()
+    except todolist.models.Comments.DoesNotExist:
+        return django.http.HttpResponseNotFound()

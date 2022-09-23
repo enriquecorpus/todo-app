@@ -36,7 +36,7 @@
       <div class="col-md-8">
         <div class="d-flex flex-column comment-section">
           <div class="bg-white p-2">
-            <button  data-todo-id="{{todo.id}}" type="button" class="btn-delete-post close float-right text-dark text-right" aria-label="Close">
+            <button  data-todo-id="{{todo.id}}" type="button" class="btn-delete-todo close float-right text-dark text-right" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
             <div class="d-flex flex-row">
@@ -68,15 +68,18 @@
             <h6>Comments</h6>
           </div>
           <div class="bg-light p-2">
-            {% for comments in todo.comments_set.all  %}
-            <div>
-              <p class="comment-text">{{comments.comment}}</p>
+            {% for comment in todo.comments_set.all  %}
+            <div id="comment-id-{{comment.id}}">
+              <div>
+                <p class="comment-text">{{comment.comment}}</p>
+              </div>
+              <div class="mt-2 text-right">
+                <button class="btn btn-outline-info btn-sm shadow-none " type="button" data-id="{{ comment.id}}">Edit</button>
+                <button class="btn btn-outline-danger btn-sm ml-1 shadow-none btn-delete-comment" type="button" data-comment-id="{{ comment.id}}">Delete</button>
+              </div>
+              <hr class="mt-2 mb-3"/>
             </div>
-            <div class="mt-2 text-right">
-              <button class="btn btn-outline-info btn-sm shadow-none" type="button" data-id="{{ comments.id}}">Edit</button>
-              <button class="btn btn-outline-danger btn-sm ml-1 shadow-none " type="button" data-id="{{ comments.id}}">Delete</button>
-            </div>
-            <hr class="mt-2 mb-3"/>
+
             {% endfor %}
           </div>
           {% endif %}
@@ -135,7 +138,8 @@
 
 <script>
 $(document).ready(function () {
-  $('.btn-delete-post').click(function () {
+
+  $('.btn-delete-todo').click(function () {
     var todo_id = $(this).data('todo-id');
     $.ajax({
       url: "{% url 'todolist:remove_todo' %}",
@@ -146,6 +150,26 @@ $(document).ready(function () {
       },
       success: function (response) {
         $('#todo-id-' + todo_id).remove();
+        console.log(response);
+      },
+      error: function (response) {
+        console.log(response);
+      }
+    });
+  });
+
+
+  $('.btn-delete-comment').click(function () {
+    var comment_id = $(this).data('comment-id');
+    $.ajax({
+      url: "{% url 'todolist:remove_comment' %}",
+      type: "POST",
+      data: {
+        comment_id: comment_id,
+        csrfmiddlewaretoken: '{{ csrf_token }}'
+      },
+      success: function (response) {
+        $('#comment-id-' + comment_id).remove();
         console.log(response);
       },
       error: function (response) {
