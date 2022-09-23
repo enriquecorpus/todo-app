@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect
 from .forms import MyUserCreationForm
 from django.contrib.auth import login
 from django.contrib import messages
+import django.contrib.auth
+import django.http
+import django.urls
 
 _POST = "POST"
 _GET = "GET"
@@ -20,3 +23,7 @@ def register(request):
                 messages.error(request, err)
     form = MyUserCreationForm()
     return render(request=request, template_name="auth/register.html", context={"form": form})
+
+def logout(request):
+    django.contrib.auth.logout(request)
+    return django.http.response.HttpResponseRedirect(django.urls.reverse('index'))

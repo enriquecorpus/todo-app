@@ -1,0 +1,43 @@
+{% load static bootstrap4 %}
+{% bootstrap_javascript jquery='full' %}
+{% bootstrap_css %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  <title>Todo App</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}"/>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+</head>
+<body>
+
+{% include 'common/base_header.html' %}
+<div class="container">
+  <div class="row">
+    <div class="col-12 mt-5 text-center">
+      <h2>CSA CB Daily Productivity Stats</h2>
+    </div>
+  </div>
+  <div class="row">
+
+  </div>
+</div>
+<div clas="row">
+  <div class="container-fluid" id="entered-daily-ratings"></div>
+</div>
+
+
+<style>
+  label {
+    text-align: right;
+  }
+</style>
+
+<script>
+
+</script>
+</body>
+</html>

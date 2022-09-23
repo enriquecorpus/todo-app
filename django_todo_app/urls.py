@@ -17,9 +17,11 @@ from django.contrib import admin
 from django.urls import path
 import django.contrib.auth.views
 from accounts.views import register
+from todolist.views import index
+from django.urls import include
 
 urlpatterns = [
+    path('', index, name="index"),
     path('admin/', admin.site.urls),
-    path('login/', django.contrib.auth.views.LoginView.as_view(template_name='auth/login.html'), name="login"),
-    path('register/', register, name="register")
+    path('accounts/', include(('accounts.urls', 'accounts'), namespace='accounts')),
 ]

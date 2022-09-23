@@ -31,7 +31,7 @@
             {% csrf_token %}
             {% bootstrap_form form %}
             <button type="submit" class="btn btn-primary pl-5 pr-5 btn-block">Register</button>
-            <a  class="btn btn-link pl-5 pr-5 btn-block" href="{% url 'login' %}">Login</a>
+            <a  class="btn btn-link pl-5 pr-5 btn-block" href="{% url 'accounts:login' %}">Login</a>
         </form>
     </div>
 
