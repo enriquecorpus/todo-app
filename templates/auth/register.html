@@ -18,9 +18,20 @@
                      style="max-height: 80px;height: auto;width: 80px">
             </div>
             <h4 class="text-center mb-4 font-weight-normal">Register</h4>
+            {% if messages %}
+            <small class="form-text text-muted">
+            <ul class="messages">
+                {% for message in messages %}
+                <li  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </li>
+                {% endfor %}
+            </ul>
+            </small>
+            {% endif %}
+
             {% csrf_token %}
             {% bootstrap_form form %}
             <button type="submit" class="btn btn-primary pl-5 pr-5 btn-block">Register</button>
+            <a  class="btn btn-link pl-5 pr-5 btn-block" href="{% url 'login' %}">Login</a>
         </form>
     </div>
 
