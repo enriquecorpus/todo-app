@@ -17,7 +17,7 @@
 
 {% include 'common/base_header.html' %}
 {% for message in messages %}
-<div class="alert {{ message.tags }} alert-danger alert-dismissible shadow fade show" role="alert">
+<div class="alert {{ message.tags }} alert-{{message.tags}} alert-dismissible shadow fade show" role="alert">
   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -28,13 +28,13 @@
 
     <div class="col-12 mt-5 text-center">
       <h2>My Todo List</h2>
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#create-todo">
+      <button id="btn-open-modal" type="button" class="btn btn-primary">
         Create Todo
       </button>
     </div>
 
-
-  <div id="create-todo" class="modal" tabindex="-1" role="dialog">
+<!--  Create or Update TODO Modal-->
+  <div id="create-update-todo" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -43,11 +43,12 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form id="create-todo-form"  method="post">
+        <form id="create-update-todo-form"  method="post">
 
           <div class="modal-body">
             {% csrf_token %}
             {% bootstrap_form form %}
+            <input type="hidden" name="update_todo_id" id="update_todo_id" value="">
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -58,6 +59,37 @@
       </div>
     </div>
   </div>
+
+<!--  Update Comment modal-->
+  <div id="update-comment-modal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit comment</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form id="update-comment-form"  method="POST" action="{% url 'todolist:update_comment' %}">
+
+          <div class="modal-body">
+            {% csrf_token %}
+              <div class="form-group">
+                <label for="comment_text">Comment</label>
+                <input required type="text" class="form-control" id="comment_text" name ="comment_text" placeholder="Write something...">
+              </div>
+            <input type="hidden" name="comment_id" id="comment_id" value="">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
 
     {% for todo in todolist %}
       <div id="todo-id-{{ todo.id }}">
@@ -70,18 +102,22 @@
                     <button  data-todo-id="{{todo.id}}" type="button" class="btn-delete-todo close float-right text-dark text-right ml-1" aria-label="Close">
                       <i class="fa fa-times fa-xs" aria-hidden="true"></i>
                     </button>
-
                     <button  data-todo-id="{{todo.id}}" type="button" class="btn-edit-todo close float-right text-dark text-right ml-1" aria-label="Edit">
                       <i class="fa fa-edit fa-xs" aria-hidden="true"></i>
                     </button>
                   </div>
 
                   <div class="d-flex flex-row">
-                    <div class="d-flex flex-column justify-content-start"><span class="d-block font-weight-bold title">{{todo.title}}</span>
+                    <div class="d-flex flex-column justify-content-start">
+                      <div id="todo-title-{{todo.id}}">
+                        <span class="d-block font-weight-bold title">
+                        {{todo.title}}
+                      </span>
+                      </div>
                       <span class="date text-black-50">{{todo.created_at}}</span>
                     </div>
                   </div>
-                  <div class="mt-2">
+                  <div id= "todo-desc-{{todo.id}}" class="mt-2">
                     <p class="desc-text">{{todo.description}}</p>
                   </div>
                 </div>
@@ -111,7 +147,7 @@
                       <p class="comment-text">{{comment.comment}}</p>
                     </div>
                     <div class="mt-2 text-right">
-                      <button class="btn btn-outline-info btn-sm shadow-none " type="button" data-id="{{ comment.id}}">Edit</button>
+                      <button class="btn btn-outline-info btn-sm shadow-none btn-update-comment" type="button" data-comment-id="{{ comment.id}}">Edit</button>
                       <button class="btn btn-outline-danger btn-sm ml-1 shadow-none btn-delete-comment" type="button" data-comment-id="{{ comment.id}}">Delete</button>
                     </div>
                     <hr class="mt-2 mb-3"/>
@@ -121,8 +157,6 @@
                 </div>
                 {% endif %}
 
-
-
               </div>
             </div>
           </div>
@@ -130,12 +164,21 @@
       </div>
     {% endfor %}
 </div>
-<div clas="row">
-  <div class="container-fluid" id="entered-daily-ratings"></div>
-</div>
-
 
 <style>
+  .comment-section {
+        width: 100%;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+    }
+  p{
+    display: block;
+    width: 100%;
+    height: auto;
+    word-break: break-all;
+    word-wrap: break-word;
+    white-space: normal;
+  }
   .todo-note-buttons {
     flex-direction: row-reverse;
   }
@@ -195,6 +238,16 @@ $(document).ready(function () {
     });
   });
 
+  $('.btn-edit-todo').click(function () {
+    const todo_id = $(this).data('todo-id');
+    const title = $("#todo-title-" + todo_id + " span").text().trim()
+    const desc = $("#todo-desc-" + todo_id + " p").text().trim()
+    $("#create-update-todo h5").text("Update Todo");
+    $("#update_todo_id").val(todo_id);
+    $("#id_title").val(title);
+    $("#id_description").val(desc);
+    $('#create-update-todo').modal('show');
+  });
 
   $('.btn-delete-comment').click(function () {
     var comment_id = $(this).data('comment-id');
@@ -214,6 +267,22 @@ $(document).ready(function () {
       }
     });
   });
+
+  $('#btn-open-modal').click(function () {
+    $("#create-update-todo h5").text("Create Todo");
+    $("#update_todo_id").val("");
+    $("#id_title").val("");
+    $("#id_description").val("");
+    $('#create-update-todo').modal('show');
+  });
+
+  $('.btn-update-comment').click(function () {
+    var comment_id = $(this).data('comment-id');
+    $("#comment_text").val($("#comment-id-" + comment_id + " p").text().trim());
+    $("#comment_id").val(comment_id);
+    $('#update-comment-modal').modal('show');
+  });
+
 });
 </script>
 </body>
