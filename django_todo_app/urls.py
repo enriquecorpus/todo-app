@@ -22,4 +22,5 @@ urlpatterns = [
     path('', index, name="index"),
     path('admin/', admin.site.urls),
     path('accounts/', include(('accounts.urls', 'accounts'), namespace='accounts')),
+    path('todolist/', include(('todolist.urls', 'todolist'), namespace='todolist')),
 ]

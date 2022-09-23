@@ -15,6 +15,14 @@
 <body>
 
 {% include 'common/base_header.html' %}
+{% for message in messages %}
+<div class="alert {{ message.tags }} alert-danger alert-dismissible shadow fade show" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  {{ message | safe }}
+</div>
+{% endfor %}
 <div class="container">
 
     <div class="col-12 mt-5 text-center">
@@ -22,22 +30,35 @@
     </div>
 
     {% for todo in todolist %}
-
+<div id="todo-id-{{ todo.id }}">
   <div class="container mt-5">
     <div class="d-flex justify-content-center row">
       <div class="col-md-8">
         <div class="d-flex flex-column comment-section">
           <div class="bg-white p-2">
+            <button  data-todo-id="{{todo.id}}" type="button" class="btn-delete-post close float-right text-dark text-right" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
             <div class="d-flex flex-row">
-              <div class="d-flex flex-column justify-content-start"><span class="d-block font-weight-bold name">{{todo.title}}</span><span class="date text-black-50">{{todo.created_at}}</span></div>
+              <div class="d-flex flex-column justify-content-start"><span class="d-block font-weight-bold title">{{todo.title}}</span>
+                <span class="date text-black-50">{{todo.created_at}}</span>
+              </div>
             </div>
             <div class="mt-2">
-              <p class="comment-text">{{todo.description}}</p>
+              <p class="desc-text">{{todo.description}}</p>
             </div>
           </div>
           <div class="bg-light p-2">
-            <div class="d-flex flex-row align-items-start"><textarea class="form-control ml-1 shadow-none textarea"></textarea></div>
-            <div class="mt-2 text-right"><button class="btn btn-primary btn-sm shadow-none" type="button">Post comment</button></div>
+            <form class="form" method="POST" action="{% url 'todolist:add_comment' %}">
+              {% csrf_token %}
+              <input type="hidden" id="todo_id" name="todo_id" value="{{ todo.id }}">
+              <input type="hidden" id="author" name="author" value="{{ request.user.username }}">
+              <div class="d-flex flex-row align-items-start">
+                <input type="text" name="comment" value="" class="form-control ml-1 shadow-none textarea" id="comment">
+              </div>
+              <div class="mt-2 text-right"><button id="btn-add-comment" class="btn btn-primary btn-sm shadow-none" data-todo-id="{{ todo.id }} " type="submit">Post comment</button></div>
+            </form>
+
             <hr class="mt-2 mb-3"/>
           </div>
 
@@ -51,7 +72,10 @@
             <div>
               <p class="comment-text">{{comments.comment}}</p>
             </div>
-            <div class="mt-2 text-right"><button class="btn btn-primary btn-sm shadow-none" type="button">Edit</button><button class="btn btn-outline-primary btn-sm ml-1 shadow-none" type="button">Delete</button></div>
+            <div class="mt-2 text-right">
+              <button class="btn btn-outline-info btn-sm shadow-none" type="button" data-id="{{ comments.id}}">Edit</button>
+              <button class="btn btn-outline-danger btn-sm ml-1 shadow-none " type="button" data-id="{{ comments.id}}">Delete</button>
+            </div>
             <hr class="mt-2 mb-3"/>
             {% endfor %}
           </div>
@@ -63,6 +87,8 @@
       </div>
     </div>
   </div>
+</div>
+
 
 
     {% endfor %}
@@ -86,6 +112,10 @@
     font-size: 11px
   }
 
+  .desc-text {
+    font-size: 14px
+  }
+
   .comment-text {
     font-size: 12px
   }
@@ -94,14 +124,9 @@
     box-shadow: none
   }
 
-  .name {
+  .title {
     color: #007bff
   }
-
-  .cursor:hover {
-    color: blue
-  }
-
 
   .textarea {
     resize: none
@@ -109,7 +134,27 @@
 </style>
 
 <script>
-
+$(document).ready(function () {
+  $('.btn-delete-post').click(function () {
+    var todo_id = $(this).data('todo-id');
+    $.ajax({
+      url: "{% url 'todolist:remove_todo' %}",
+      type: "POST",
+      data: {
+        todo_id: todo_id,
+        csrfmiddlewaretoken: '{{ csrf_token }}'
+      },
+      success: function (response) {
+        $('#todo-id-' + todo_id).remove();
+        console.log(response);
+      },
+      error: function (response) {
+        console.log(response);
+      }
+    });
+  });
+});
 </script>
 </body>
 </html>
+
