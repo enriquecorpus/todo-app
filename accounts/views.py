@@ -3,7 +3,6 @@ from .forms import MyUserCreationForm
 from django.contrib.auth import login
 from django.contrib import messages
 import django.contrib.auth
-import django.http
 import django.urls
 
 _POST = "POST"
@@ -17,7 +16,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect("accounts:login")
+            return redirect("index")
         for error in form.errors:
             for err in form.errors[error]:
                 messages.error(request, err)
@@ -26,4 +25,4 @@ def register(request):
 
 def logout(request):
     django.contrib.auth.logout(request)
-    return django.http.response.HttpResponseRedirect(django.urls.reverse('index'))
+    return redirect(django.urls.reverse('index'))
