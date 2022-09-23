@@ -1,15 +1,19 @@
 import django.forms
-import models
+import todolist.models
 
 
-class TodoListForm(django.forms.Form):
+class TodoListForm(django.forms.ModelForm):
     title = django.forms.CharField(max_length=100, required=True)
     description = django.forms.CharField(widget=django.forms.Textarea, required=False)
-    author = django.forms.Field(required=True)
+    author = django.forms.CharField(widget=django.forms.HiddenInput(), required=False)
+
+    def __init__(self, author, *args, **kwargs):
+        super(TodoListForm, self).__init__(*args, **kwargs)
+        self.author = author
 
     class Meta:
-        model = models.TodoList
-        exclude = ['author', 'created_at', 'updated_at', 'deleted_at']
+        model = todolist.models.TodoList
+        exclude = ['created_at', 'updated_at', 'deleted_at']
 
     def clean_title(self):
         title = self.cleaned_data['title']
@@ -19,12 +23,16 @@ class TodoListForm(django.forms.Form):
             raise django.forms.ValidationError('Title must not be 100 characters long')
         return title
 
+    def clean_description(self):
+        description = self.cleaned_data['description']
+        if len(description) > 2000:
+            raise django.forms.ValidationError('Description must not be 2000 characters long')
+        return description
+
     def clean_author(self):
-        try:
-            author = self.cleaned_data['author']
-            author = models.MyUser.objects.get(username=author)
-            if not author:
-                raise django.forms.ValidationError('Author must be set')
-            return author
-        except models.MyUser.DoesNotExist:
-            raise django.forms.ValidationError('Author must be set')
+        if self.instance and self.instance.pk and self.instance.author != self.author:
+            raise django.forms.ValidationError('You are not the author of this todo item')
+        return self.author
+
+    def save(self, commit=True):
+        return super(TodoListForm, self).save(commit=commit)

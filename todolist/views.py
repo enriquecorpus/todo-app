@@ -7,12 +7,19 @@ import django.http
 import django.urls
 from django.shortcuts import render, redirect
 from django.contrib import messages
+import todolist.forms
 
 
 @django.contrib.auth.decorators.login_required
 def index(request):
     todos = todolist.models.TodoList.objects.filter(author=request.user)
-    return render(request=request, template_name="todolist/index.html", context={"todolist": todos})
+    if request.method == "POST":
+        form = todolist.forms.TodoListForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("index")
+    form = todolist.forms.TodoListForm(request.user)
+    return render(request=request, template_name="todolist/index.html", context={"todolist": todos, "form": form})
 
 
 @django.contrib.auth.decorators.login_required

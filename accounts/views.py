@@ -17,7 +17,7 @@ def register(request):
             user = form.save()
             login(request, user)
             messages.success(request, "Registration successful.")
-            return redirect("main:homepage")
+            return redirect("login")
         for error in form.errors:
             for err in form.errors[error]:
                 messages.error(request, err)
